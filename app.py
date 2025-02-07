@@ -6,7 +6,10 @@ import os
 TOKEN = os.getenv("BOT_TOKEN") # 🔴 Make sure this line is correct!
 
 # ✅ Debugging: Print the token to check if Railway is reading it
-print(f"🔍 Debug Token: {8029048707:AAFZlO5TRy4tyad28jqucBegPHEjknKFNrc}") # 🔴 This should print your actual token!
+if TOKEN:
+    print(f"🔍 Debug Token: {8029048707:AAFZlO5TRy4tyad28jqucBegPHEjknKFNrc}") # ✅ This prints the token if it exists
+else:
+    print("❌ ERROR: BOT_TOKEN is not loaded!")
 
 # ✅ Initialize the bot with the token
 bot = telegram.Bot(token=TOKEN) # 🔴 This line must stay!
