@@ -2,7 +2,11 @@ from flask import Flask, request
 import telegram
 import os
 
-TOKEN = os.getenv("8029048707:AAGfxjlxZAIPkPS93a9BZ9w-Ku8-ywT5I-M")
+# Load token
+TOKEN = os.getenv("8029048707:AAGfxjlxZAIPkPS93a9BZ9w-Ku8-ywT5I-M") # If using Railway env variable
+print(f"🔍 Debug Token: {TOKEN}") # Debugging output
+
+# Initialize bot
 bot = telegram.Bot(token=TOKEN)
 
 app = Flask(__name__)
