@@ -175,13 +175,5 @@ bot_app.add_handler(CallbackQueryHandler(set_well_capacity, pattern="set_well_ca
 bot_app.add_handler(CallbackQueryHandler(update_well_limit, pattern="set_limit_.*"))
 bot_app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, ai_assistant))
 
-# 📌 **Start Webhook on Railway**
 if __name__ == "__main__":
-    PORT = int(os.environ.get("PORT", 5000))
-    bot_app.run_webhook(
-        listen="0.0.0.0",
-        port=PORT,
-        url_path=TOKEN,
-        webhook_url=f"{https://sandbot2-production.up.railway.app.com}/{TOKEN}"
-    )
-    app.run(host="0.0.0.0", port=PORT, debug=True)
+    bot_app.run_polling()
