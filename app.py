@@ -46,7 +46,7 @@ bot_app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, echo))
 
 if __name__ == "__main__":
     # Choose between Webhook or Polling
-    USE_WEBHOOK = True  # Change to False if you want to use polling mode instead
+    USE_WEBHOOK = False  # Change to False if you want to use polling mode instead
 
     if USE_WEBHOOK:
         bot_app.run_webhook(
