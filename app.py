@@ -1,6 +1,6 @@
 from flask import Flask, request
 import telegram
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, Dispatcher
+from telegram.ext import Updater, CommandHandler, MessageHandler, filters, Dispatcher
 import os
 
 TOKEN = "8029048707:AAFZlO5TRy4tyad28jqucBegPHEjknKFNrc"
@@ -35,7 +35,7 @@ if __name__ == "__main__":
     # Add command handlers
     dispatcher.add_handler(CommandHandler("start", start))
     dispatcher.add_handler(CommandHandler("help", help_command))
-    dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, echo))
+    dispatcher.add_handler(MessageHandler(filters.text & ~filters.command, echo))
 
     # Set webhook for Flask
     PORT = int(os.environ.get("PORT", 5000))
