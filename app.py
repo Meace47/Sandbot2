@@ -1,16 +1,22 @@
 from flask import Flask, request
+import telegram
+import os
+
+TOKEN = os.getenv("8029048707:AAGfxjlxZAIPkPS93a9BZ9w-Ku8-ywT5I-M")
+bot = telegram.Bot(token=TOKEN)
 
 app = Flask(__name__)
 
-@app.route('/', methods=['GET'])
-def home():
-    return "🚛 SandBot is running!"
-
-@app.route('/webhook', methods=['POST'])
+@app.route("https://sandbot2-production.up.railway.app/webhook", methods=["POST"])
 def webhook():
-    update = request.get_json()
-    print(update) # This prints Telegram messages to the console
-    return {"ok": True}
+    update = telegram.Update.de_json(request.get_json(force=True), bot)
+    chat_id = update.message.chat.id
+    text = update.message.text
+    
+    if text == "/start":
+        bot.send_message(chat_id=chat_id, text="Hello! I'm your bot.")
+    
+    return "OK", 200
 
-if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=5000)
+if __name__ == "__main__":
+    app.run(port=5000)
