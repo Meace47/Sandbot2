@@ -2,17 +2,16 @@ from flask import Flask, request
 import telegram
 import os
 
+# ✅ Load the token from the environment variable (corrected)
+TOKEN = os.getenv("BOT_TOKEN") # 🔴 Make sure this line is correct!
+
+# ✅ Debugging: Print the token to check if Railway is reading it
+print(f"🔍 Debug Token: {8029048707:AAFZlO5TRy4tyad28jqucBegPHEjknKFNrc}") # 🔴 This should print your actual token!
+
+# ✅ Initialize the bot with the token
+bot = telegram.Bot(token=TOKEN) # 🔴 This line must stay!
 # ✅ Debugging: Check if Railway is reading the token
 TOKEN = os.getenv("BOT_TOKEN")
-
-if TOKEN is None:
-    print("❌ ERROR: BOT_TOKEN is not loaded from environment variables!")
-
-else:
-    print(f"✅ Debug Token: {8029048707:AAFZlO5TRy4tyad28jqucBegPHEjknKFNrc}")  # This should show the actual token
-
-# Initialize bot
-bot = telegram.Bot(token=TOKEN)
 
 app = Flask(__name__)
 
