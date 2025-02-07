@@ -169,8 +169,8 @@ async def ai_assistant(update: Update, context):
     await update.message.reply_text(random.choice(responses))
 
 # 📌 **Handlers**
-bot_app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, new_message))
 bot_app.add_handler(MessageHandler(filters.TEXT & filters.Regex(r'^\d+$'), register_truck))
+bot_app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, new_message))
 bot_app.add_handler(CallbackQueryHandler(stage_truck, pattern="stage"))
 bot_app.add_handler(CallbackQueryHandler(check_status, pattern="status"))
 bot_app.add_handler(CallbackQueryHandler(set_well_capacity, pattern="set_well_capacity"))
