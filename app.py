@@ -10,7 +10,7 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
                     level=logging.INFO)
 
 TOKEN = "8029048707:AAFZlO5TRy4tyad28jqucBegPHEjknKFNrc"
-bot = telegram.Bot(token=Token)
+bot = telegram.Bot(token=TOKEN)
 
 print(bot.got_me())
 WEBHOOK_URL = "https://sandbot2-production.up.railway.app.com"  # Replace with your actual domain
