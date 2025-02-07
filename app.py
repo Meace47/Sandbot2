@@ -10,8 +10,7 @@ logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
 )
 
-TOKEN = "8029048707:AAFZlO5TRy4tyad28jqucBegPHEjknKFNrc
-"
+TOKEN = "8029048707:AAFZlO5TRy4tyad28jqucBegPHEjknKFNrc"
 WEBHOOK_URL = "https://your-railway-url.com" # Replace with your actual Railway URL
 USE_WEBHOOK = True # Enable webhook mode
 
