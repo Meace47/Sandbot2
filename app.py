@@ -49,9 +49,22 @@ async def new_message(update: Update, context):
 
 # 📌 **Register Truck Number**
 async def register_truck(update: Update, context):
-    """Register or change a truck number when a driver sends their number."""
+    async def register_truck(update: Update, context):
+    """Register or update a truck number when a driver sends their number."""
     user_id = update.message.from_user.id
     truck_number = update.message.text.strip()
+
+    if not truck_number.isdigit():
+        await update.message.reply_text("❌ Please enter a valid truck number.")
+        return
+
+    # ✅ Save the truck number only if it's valid
+    truck_numbers[user_id] = truck_number 
+
+    await update.message.reply_text(f"✅ Truck number {truck_number} registered successfully!")
+   
+    # ✅ Move directly to the main menu after registration
+    await show_main_menu(update, context)
 
     if not truck_number.isdigit():
         await update.message.reply_text("❌ Please enter a valid truck number.")
