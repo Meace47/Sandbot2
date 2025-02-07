@@ -1,30 +1,47 @@
-import os
-import telegram
 from flask import Flask, request
+import telegram
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, Dispatcher
+import os
 
-# Replace with your bot's token
-TELEGRAM_TOKEN = 'YOUR_TELEGRAM_BOT_TOKEN'
-bot = Bot(8029048707:AAFZlO5TRy4tyad28jqucBegPHEjknKFNrc)
-updater = Updater(token=TELEGRAM_TOKEN, use_context=True)
-dispatcher = updater.dispatcher
-# ✅ Set up Flask for handling webhooks
+TOKEN = "8029048707:AAFZlO5TRy4tyad28jqucBegPHEjknKFNrc"
+bot = telegram.Bot(token=TOKEN)
+
 app = Flask(__name__)
 
-@app.route("/webhook", methods=["POST"])
+@app.route(f'/{TOKEN}', methods=['POST'])
 def webhook():
-    """Handle incoming messages from Telegram."""
+    """Handle incoming Telegram messages via webhook"""
     update = telegram.Update.de_json(request.get_json(force=True), bot)
-    
-    # ✅ Extract chat ID and text message
-    chat_id = update.message.chat.id
-    text = update.message.text
+    dispatcher.process_update(update)
+    return 'OK', 200
 
-    # ✅ Respond to "/start" command
-    if text == "/start":
-        bot.send_message(chat_id=chat_id, text="🚛 Welcome to SandBot! Type /help for commands.")
+def start(update, context):
+    """Start command"""
+    update.message.reply_text("Hello! SandBot is online.")
 
-    return "OK", 200 # ✅ Return HTTP 200 response to Telegram
+def help_command(update, context):
+    """Help command"""
+    update.message.reply_text("Available commands:\n/start - Start the bot\n/help - Show this help message")
 
-# ✅ Run the Flask app
+def echo(update, context):
+    """Echo all user messages"""
+    update.message.reply_text(update.message.text)
+
 if __name__ == "__main__":
-    app.run(port=5000)
+    # Set up the bot
+    updater = Updater(TOKEN, use_context=True)
+    dispatcher = updater.dispatcher
+
+    # Add command handlers
+    dispatcher.add_handler(CommandHandler("start", start))
+    dispatcher.add_handler(CommandHandler("help", help_command))
+    dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, echo))
+
+    # Set webhook for Flask
+    PORT = int(os.environ.get("PORT", 5000))
+    updater.start_webhook(listen="0.0.0.0",
+                          port=PORT,
+                          url_path=TOKEN,
+                          webhook_url=f"https://your-hostname.com/{TOKEN}")
+
+    app.run(host="0.0.0.0", port=PORT, debug=True)
