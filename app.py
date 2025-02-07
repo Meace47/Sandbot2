@@ -1,5 +1,5 @@
 import os
-import telegram
+import telegram import update, Bot
 from flask import Flask, request
 
 # Replace with your bot's token
