@@ -1,47 +1,53 @@
 from flask import Flask, request
 import telegram
-from telegram.ext import Updater, CommandHandler, MessageHandler, filters, Dispatcher
+from telegram import Update
+from telegram.ext import Application, CommandHandler, MessageHandler, filters
 import os
+import logging
+
+# Enable logging
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+                    level=logging.INFO)
 
 TOKEN = "8029048707:AAFZlO5TRy4tyad28jqucBegPHEjknKFNrc"
-bot = telegram.Bot(token=TOKEN)
+WEBHOOK_URL = "https://sandbot2-production.up.railway.app.com"  # Replace with your actual domain
 
 app = Flask(__name__)
+
+# Initialize the bot application
+bot_app = Application.builder().token(TOKEN).build()
 
 @app.route(f'/{TOKEN}', methods=['POST'])
 def webhook():
     """Handle incoming Telegram messages via webhook"""
-    update = telegram.Update.de_json(request.get_json(force=True), bot)
-    dispatcher.process_update(update)
+    request_data = request.get_json(force=True)
+    update = Update.de_json(request_data, bot_app.bot)
+    bot_app.process_update(update)
     return 'OK', 200
 
-def start(update, context):
-    """Start command"""
-    update.message.reply_text("Hello! SandBot is online.")
+async def start(update: Update, context):
+    """Handle /start command"""
+    await update.message.reply_text("Hello! SandBot is online.")
 
-def help_command(update, context):
-    """Help command"""
-    update.message.reply_text("Available commands:\n/start - Start the bot\n/help - Show this help message")
+async def help_command(update: Update, context):
+    """Handle /help command"""
+    await update.message.reply_text("Available commands:\n/start - Start the bot\n/help - Show this help message")
 
-def echo(update, context):
-    """Echo all user messages"""
-    update.message.reply_text(update.message.text)
+async def echo(update: Update, context):
+    """Echo user messages"""
+    await update.message.reply_text(update.message.text)
 
 if __name__ == "__main__":
-    # Set up the bot
-    updater = Updater(TOKEN, use_context=True)
-    dispatcher = updater.dispatcher
-
     # Add command handlers
-    dispatcher.add_handler(CommandHandler("start", start))
-    dispatcher.add_handler(CommandHandler("help", help_command))
-    dispatcher.add_handler(MessageHandler(filters.text & ~filters.command, echo))
+    bot_app.add_handler(CommandHandler("start", start))
+    bot_app.add_handler(CommandHandler("help", help_command))
+    bot_app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, echo))
 
-    # Set webhook for Flask
+    # Set up webhook
     PORT = int(os.environ.get("PORT", 5000))
-    updater.start_webhook(listen="0.0.0.0",
-                          port=PORT,
-                          url_path=TOKEN,
-                          webhook_url=f"https://your-hostname.com/{TOKEN}")
-
+    bot_app.run_webhook(listen="0.0.0.0",
+                        port=PORT,
+                        url_path=TOKEN,
+                        webhook_url=f"{WEBHOOK_URL}/{TOKEN}")
+   
     app.run(host="0.0.0.0", port=PORT, debug=True)
