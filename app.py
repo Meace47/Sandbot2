@@ -3,7 +3,7 @@ import telegram
 from flask import Flask, request
 
 # ✅ Load the bot token from Railway's environment variables
-TOKEN = os.getenv("BOT_TOKEN")
+TOKEN = os.getenv("8029048707:AAFZlO5TRy4tyad28jqucBegPHEjknKFNrc")
 
 # ✅ Debugging: Print the token only if it exists, otherwise show an error
 if TOKEN:
