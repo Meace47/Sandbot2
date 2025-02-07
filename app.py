@@ -41,10 +41,11 @@ def webhook():
 async def new_message(update: Update, context):
     """Prompt users to enter their truck number when they first send a message."""
     user_id = update.message.from_user.id
-    if user_id not in truck_numbers:
-        await update.message.reply_text("🚛 Please enter your truck number to proceed.")
+    
+    if user_id in truck_numbers:
+        await show_main_menu(update, context) # ✅ Now correctly moves to menu
     else:
-        await show_main_menu(update, context)
+        await update.message.reply_text("🚛 Please enter your truck number to proceed.")
 
 # 📌 **Register Truck Number**
 async def register_truck(update: Update, context):
@@ -59,6 +60,7 @@ async def register_truck(update: Update, context):
     truck_numbers[user_id] = truck_number
     await update.message.reply_text(f"✅ Truck number {truck_number} registered!")
     await show_main_menu(update, context)
+
 
 # 📌 **Show Main Menu**
 async def show_main_menu(update: Update, context):
