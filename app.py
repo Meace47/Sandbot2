@@ -12,7 +12,7 @@ else:
     print(f"✅ Debug Token: {8029048707:AAGfxjlxZAIPkPS93a9BZ9w-Ku8-ywT5I-M}")  # This should show the actual token
 
 # Initialize bot
-bot = telegram.Bot(token=TOKEN)
+bot = telegram.Bot(token=8029048707:AAGfxjlxZAIPkPS93a9BZ9w-Ku8-ywT5I-M)
 
 app = Flask(__name__)
 
