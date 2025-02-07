@@ -1,6 +1,6 @@
 from flask import Flask, request
 import telegram
-from telegram import Update
+from telegram import Update, Bot
 from telegram.ext import Application, CommandHandler, MessageHandler, filters
 import os
 import logging
@@ -30,7 +30,7 @@ def webhook():
 
 async def start(update: Update, context):
     """Handle /start command"""
-    await update.message.reply_text("Hello! SandBot is online.")
+    await update.message.reply_text("Hello! SandBot 2 is online.")
 
 async def help_command(update: Update, context):
     """Handle /help command"""
@@ -49,7 +49,7 @@ if __name__ == "__main__":
     # Set up webhook
     PORT = int(os.environ.get("PORT", 5000))
     bot_app.run_webhook(listen="0.0.0.0",
-                        port=PORT,
+                        port=5000,
                         url_path=TOKEN,
                         webhook_url=f"{WEBHOOK_URL}/{TOKEN}")
    
