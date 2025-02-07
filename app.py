@@ -3,13 +3,13 @@ import telegram
 import os
 
 # ✅ Debugging: Check if Railway is reading the token
-TOKEN = os.getenv("8029048707:AAGfxjlxZAIPkPS93a9BZ9w-Ku8-ywT5I-M")
+TOKEN = os.getenv("BOT_TOKEN")
 
 if TOKEN is None:
     print("❌ ERROR: BOT_TOKEN is not loaded from environment variables!")
 
 else:
-    print(f"✅ Debug Token: {8029048707:AAGfxjlxZAIPkPS93a9BZ9w-Ku8-ywT5I-M}")  # This should show the actual token
+    print(f"✅ Debug Token: {8029048707:AAFZlO5TRy4tyad28jqucBegPHEjknKFNrc}")  # This should show the actual token
 
 # Initialize bot
 bot = telegram.Bot(token=TOKEN)
