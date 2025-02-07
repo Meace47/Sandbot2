@@ -2,18 +2,11 @@ import os
 import telegram
 from flask import Flask, request
 
-# ✅ Load the bot token from Railway's environment variables
-TOKEN = os.getenv("8029048707:AAFZlO5TRy4tyad28jqucBegPHEjknKFNrc")
-
-# ✅ Debugging: Print the token only if it exists, otherwise show an error
-if TOKEN:
-    print(f"🔍 Debug Token Loaded Successfully") # 🚀 Safe debugging
-else:
-    print("❌ ERROR: BOT_TOKEN is not loaded! Check Railway Variables.")
-
-# ✅ Initialize the bot
-bot = telegram.Bot(token=TOKEN)
-
+# Replace with your bot's token
+TELEGRAM_TOKEN = 'YOUR_TELEGRAM_BOT_TOKEN'
+bot = Bot(8029048707:AAFZlO5TRy4tyad28jqucBegPHEjknKFNrc)
+updater = Updater(token=TELEGRAM_TOKEN, use_context=True)
+dispatcher = updater.dispatcher
 # ✅ Set up Flask for handling webhooks
 app = Flask(__name__)
 
