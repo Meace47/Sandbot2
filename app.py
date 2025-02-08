@@ -43,7 +43,7 @@ async def start(update: Update, context):
 
 # 📌 **Prompt for Truck Number on First Message**
 async def new_message(update: Update, context):
-     """Prompt new users to press 'Start' before continuing."""
+    """Prompt new users to press 'Start' before continuing."""
     user_id = update.message.from_user.id
 
     if user_id in truck_numbers and truck_numbers[user_id]:  # If truck number exists, show main menu
