@@ -49,7 +49,6 @@ async def new_message(update: Update, context):
 
 # 📌 **Register Truck Number**
 async def register_truck(update: Update, context):
-    async def register_truck(update: Update, context):
     user_id = update.message.from_user.id
     truck_number = update.message.text.strip()
 
