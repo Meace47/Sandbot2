@@ -100,6 +100,34 @@ async def show_main_menu(update: Update, context):
         reply_markup = InlineKeyboardMarkup(keyboard)
         await update.message.reply_text("🚚 *Choose an action:*", reply_markup=reply_markup)
 
+async def remove_truck(update: Update, context):
+    """Admins remove a specific truck from the list."""
+    query = update.callback_query
+
+    if not staged_trucks and not well_trucks:
+        await query.answer("🚛 No trucks to remove.")
+        return
+
+    # Create a list of buttons for admins to select a truck to remove
+    keyboard = [[InlineKeyboardButton(f"❌ Remove Truck {num}", callback_data=f"delete_{tid}")]
+                for tid, num in staged_trucks + well_trucks]
+
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    await query.edit_message_text("❌ *Select a truck to remove:*", reply_markup=reply_markup)
+
+# Handle truck deletion when an admin selects one
+async def delete_truck(update: Update, context):
+    """Remove a truck when an admin selects it from the list."""
+    query = update.callback_query
+    truck_id = query.data.split("_")[1]  # Extract truck ID
+
+    global staged_trucks, well_trucks
+    staged_trucks = [(tid, num) for tid, num in staged_trucks if str(tid) != truck_id]
+    well_trucks = [(tid, num) for tid, num in well_trucks if str(tid) != truck_id]
+
+    await query.answer("✅ Truck removed successfully.")
+    await query.edit_message_text("🚛 Truck has been removed.")
+
 # 📌 **Stage Truck**
 async def stage_truck(update: Update, context):
     """Move a truck to the staged list."""
@@ -207,6 +235,7 @@ bot_app.add_handler(CallbackQueryHandler(view_staged, pattern="view_staged"))
 bot_app.add_handler(CallbackQueryHandler(move_to_well, pattern="move_to_well"))
 bot_app.add_handler(CallbackQueryHandler(remove_truck, pattern="remove_truck"))
 bot_app.add_handler(CallbackQueryHandler(stage_truck, pattern="stage"))
+bot_app.add_handler(CallbackQueryHandler(stage_truck, pattern="delete_.*"))
 bot_app.add_handler(CallbackQueryHandler(check_status, pattern="status"))
 bot_app.add_handler(CallbackQueryHandler(set_well_capacity, pattern="set_well_capacity"))
 bot_app.add_handler(CallbackQueryHandler(update_well_limit, pattern="set_limit_.*"))
