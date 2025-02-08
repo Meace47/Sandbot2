@@ -298,8 +298,8 @@ admin_menu = ReplyKeyboardMarkup(admin_menu_keyboard, resize_keyboard=True, one_
 pinned_messages = {}
 
 # Sample staging and well data (Replace this with your actual tracking logic)
-staging_list = ["Truck 4070", "Truck 100", "Truck 3052"]  # Edit or update dynamically
-well_list = ["Truck 502", "Truck 223"]  #Edit or update dynamically
+staging_list = ["Truck 4070", "Truck 100", "Truck 3052"]  # Replace with real staging list updates
+well_list = ["Truck 502", "Truck 223"]  # Replace with real staging list updates
 
 async def update_pinned_message(context: CallbackContext):
     chat_id = context.job.chat_id
