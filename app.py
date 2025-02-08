@@ -1,6 +1,6 @@
 from flask import Flask, request
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import Application, CommandHandler, CallbackQueryHandler, MessageHandler, filters
+from telegram.ext import Application, CommandHandler, CallbackQueryHandler, JobQueue, MessageHandler, filters
 import os
 import logging
 import random
@@ -293,9 +293,6 @@ admin_menu_keyboard = [
 # Convert menu into ReplyKeyboardMarkup (always visible)
 driver_menu = ReplyKeyboardMarkup(menu_keyboard, resize_keyboard=True, one_time_keyboard=False)
 admin_menu = ReplyKeyboardMarkup(admin_menu_keyboard, resize_keyboard=True, one_time_keyboard=False)
-
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import Application, CommandHandler, CallbackContext, CallbackQueryHandler
 
 # Dictionary to store pinned message IDs per chat
 pinned_messages = {}
