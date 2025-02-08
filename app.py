@@ -42,12 +42,21 @@ async def start(update: Update, context):
     await update.message.reply_text("👋 Welcome! Choose an action below:", reply_markup=driver_menu)
 
 # 📌 **Prompt for Truck Number on First Message**
-async def new_message(update: Update, context):
-    """Prompt users to enter their truck number when they first send a message."""
+async def new_message(update: Update, context)
+     """Prompt new users to press 'Start' before continuing."""
     user_id = update.message.from_user.id
-    
+
+    if user_id in truck_numbers and truck_numbers[user_id]:  # If truck number exists, show main menu
+        await show_main_menu(update, context)
+    else:
+        await update.message.reply_text("🚛 Welcome! Press 'Start' to continue.", reply_markup=start_menu)
+
+async def handle_start_button(update: Update, context):
+    """Handles when a user presses 'Start'."""
+    user_id = update.message.from_user.id
+
     if user_id in truck_numbers:
-        await show_main_menu(update, context) # ✅ Now correctly moves to menu
+        await show_main_menu(update, context)  # Show the main menu if they already have a truck number
     else:
         await update.message.reply_text("🚛 Please enter your truck number to proceed.")
 
@@ -260,6 +269,14 @@ async def view_staged(update: Update, context):
 
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove
 
+# "Start" button for new drivers
+start_keyboard = [
+    ["▶️ Start"]
+]
+
+# Convert to ReplyKeyboardMarkup
+start_menu = ReplyKeyboardMarkup(start_keyboard, resize_keyboard=True, one_time_keyboard=True)
+
 # Persistent menu keyboard
 menu_keyboard = [
     ["🚛 Stage My Truck", "📍 Check My Status"],
@@ -280,6 +297,7 @@ admin_menu = ReplyKeyboardMarkup(admin_menu_keyboard, resize_keyboard=True, one_
 # 📌 **Handlers**
 
 bot_app.add_handler(CommandHandler("start", start))
+bot_app.add_handler(MessageHandler(filters.TEXT & filters.Regex(r'▶️ Start'), handle_start_button))
 bot_app.add_handler(MessageHandler(filters.TEXT & filters.Regex(r'^\d+$'), register_truck))
 bot_app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, new_message))
 bot_app.add_handler(CallbackQueryHandler(view_staged, pattern="view_staged"))
