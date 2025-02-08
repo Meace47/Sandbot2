@@ -91,7 +91,6 @@ async def show_main_menu(update: Update, context):
         await update.message.reply_text("🔧 *Admin Panel:*", reply_markup=reply_markup)
     else:
         await update.message.reply_text("❌ You are not an admin!")
-    else:
         keyboard = [
             [InlineKeyboardButton("🚛 Stage My Truck", callback_data="stage")],
             [InlineKeyboardButton("📍 Check My Status", callback_data="status")],
