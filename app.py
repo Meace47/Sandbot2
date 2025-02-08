@@ -72,6 +72,32 @@ async def register_truck(update: Update, context):
     await update.message.reply_text(f"✅ Truck number {truck_number} registered!")
     await show_main_menu(update, context)
 
+async def show_main_menu(update: Update, context):
+    """Show the persistent menu for all users."""
+    user_id = update.message.from_user.id
+
+    if user_id in ADMIN_IDS:
+        await update.message.reply_text("🔧 *Admin Panel Available!*", reply_markup=menu_markup)
+    else:
+        await update.message.reply_text("🚚 *Choose an action:*", reply_markup=menu_markup)
+
+async def handle_menu_buttons(update: Update, context):
+    """Handles button presses from the persistent menu."""
+    text = update.message.text
+
+    if text == "🚛 Stage My Truck":
+        await stage_truck(update, context)
+    elif text == "📍 Check My Status":
+        await check_status(update, context)
+    elif text == "🏁 Leave the Well":
+        await leave_well(update, context)
+    elif text == "🔄 Change Truck Number":
+        await change_truck(update, context)
+    elif text == "🔧 Admin Panel" and update.message.from_user.id in ADMIN_IDS:
+        await show_main_menu(update, context)
+    else:
+        await update.message.reply_text("❌ Invalid option. Please choose from the menu.")
+
 
 # 📌 **Show Main Menu**
 async def show_main_menu(update: Update, context):
@@ -90,7 +116,7 @@ async def show_main_menu(update: Update, context):
         reply_markup = InlineKeyboardMarkup(keyboard)
         await update.message.reply_text("🔧 *Admin Panel:*", reply_markup=reply_markup)
     else:
-        await update.message.reply_text("❌ You are not an admin!")
+        await update.message.reply_text("Sandbot 2 here to help! Type [/help] for commands!")
         keyboard = [
             [InlineKeyboardButton("🚛 Stage My Truck", callback_data="stage")],
             [InlineKeyboardButton("📍 Check My Status", callback_data="status")],
@@ -240,6 +266,7 @@ bot_app.add_handler(CallbackQueryHandler(check_status, pattern="status"))
 bot_app.add_handler(CallbackQueryHandler(set_well_capacity, pattern="set_well_capacity"))
 bot_app.add_handler(CallbackQueryHandler(update_well_limit, pattern="set_limit_.*"))
 bot_app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, ai_assistant))
+bot_app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_menu_buttons))
 
 if __name__ == "__main__":
     bot_app.run_polling()
