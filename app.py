@@ -123,6 +123,20 @@ async def stage_truck(update: Update, context):
     # Check if trucks need to be moved to the well
     await manage_well(update, context)
 
+async def move_to_well(update: Update, context):
+    """Admins move the next truck in line to the well."""
+    query = update.callback_query
+
+    if not staged_trucks:
+        await query.answer("🚛 No trucks available to move to the well.")
+        return
+
+    truck = staged_trucks.pop(0)  # Move first in line
+    well_trucks.append(truck)
+
+    await query.answer(f"✅ Truck {truck[1]} has been moved to the well!")
+    await query.edit_message_text(f"🚛 *Truck {truck[1]} has been moved to the well!*")
+
 # 📌 **Check Status**
 async def check_status(update: Update, context):
     """Allow drivers to check their current status."""
