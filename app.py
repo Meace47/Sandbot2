@@ -181,9 +181,17 @@ async def ai_assistant(update: Update, context):
     ]
     await update.message.reply_text(random.choice(responses))
 
+async def view_staged(update: Update, context):
+    query = update.callback_query
+    await query.answer("✅ Viewing staged trucks...")
+    await query.edit_message_text("📋 Staged truck list goes here.")
+
 # 📌 **Handlers**
 bot_app.add_handler(MessageHandler(filters.TEXT & filters.Regex(r'^\d+$'), register_truck))
 bot_app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, new_message))
+bot_app.add_handler(CallbackQueryHandler(view_staged, pattern="view_staged"))
+bot_app.add_handler(CallbackQueryHandler(move_to_well, pattern="move_to_well"))
+bot_app.add_handler(CallbackQueryHandler(remove_truck, pattern="remove_truck"))
 bot_app.add_handler(CallbackQueryHandler(stage_truck, pattern="stage"))
 bot_app.add_handler(CallbackQueryHandler(check_status, pattern="status"))
 bot_app.add_handler(CallbackQueryHandler(set_well_capacity, pattern="set_well_capacity"))
