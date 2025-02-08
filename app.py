@@ -301,13 +301,12 @@ from telegram.ext import Application, CommandHandler, CallbackContext, CallbackQ
 pinned_messages = {}
 
 # Sample staging and well data (Replace this with your actual tracking logic)
-staging_list = ["Truck 4070", "Truck 100", "Truck 3052"]
-well_list = ["Truck 502", "Truck 223"]
+staging_list = ["Truck 4070", "Truck 100", "Truck 3052"]  # Edit or update dynamically
+well_list = ["Truck 502", "Truck 223"]  #Edit or update dynamically
 
 async def update_pinned_message(context: CallbackContext):
-    """Updates the pinned staging & well list message"""
     chat_id = context.job.chat_id
-    staging_list_text = get_staging_list() # Get updated staging and well list
+    staging_list_text = get_staging_list()  # Get updated staging & well list
 
     if chat_id in pinned_messages:
         message_id = pinned_messages[chat_id]
@@ -315,14 +314,12 @@ async def update_pinned_message(context: CallbackContext):
             await context.bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=staging_list_text)
             return
         except:
-            pass # If message can't be edited, send a new one
+            pass  # If it can't be edited, send a new one
 
-    # If no valid pinned message exists, send a new one and pin it
+    # If no pinned message exists, send a new one and pin it
     message = await context.bot.send_message(chat_id=chat_id, text=staging_list_text)
     await context.bot.pin_chat_message(chat_id=chat_id, message_id=message.message_id)
-    
-    # Store the new pinned message ID
-    pinned_messages[chat_id] = message.message_id
+    pinned_messages[chat_id] = message.message_id  # Save message ID
 
 async def start_pinned_updates(update: Update, context: CallbackContext):
     """Starts automatic updates and sends Admin Menu"""
