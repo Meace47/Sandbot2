@@ -1,6 +1,6 @@
 from flask import Flask, request
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import Application, CommandHandler, CallbackQueryHandler, JobQueue, MessageHandler, filters
+from telegram.ext import Application, CommandHandler, CallbackQueryHandler, JobQueue, MessageHandler, filters, CallbackContext
 import os
 import logging
 import random
@@ -301,7 +301,7 @@ pinned_messages = {}
 staging_list = ["Truck 4070", "Truck 100", "Truck 3052"]  # Replace with real staging list updates
 well_list = ["Truck 502", "Truck 223"]  # Replace with real staging list updates
 
-async def update_pinned_message(context: CallbackContext):
+async def update_pinned_message(context: CallbackContext, chat_id: int):
     chat_id = context.job.chat_id
     staging_list_text = get_staging_list()  # Get updated staging & well list
 
@@ -342,7 +342,7 @@ async def manual_update_staging(update: Update, context: CallbackContext):
     query = update.callback_query
     await query.answer("Updating Staging List...") # Notify admin
     chat_id = query.message.chat_id
-    await update_pinned_message(context) # Call the update function
+    await update_pinned_message(context, Chat_id) # Call the update function
     await query.message.reply_text("✅ Staging list updated.")
 
 def get_staging_list():
