@@ -37,6 +37,10 @@ def webhook():
     bot_app.process_update(update)
     return "OK", 200
 
+async def start(update: Update, context):
+    """Welcome message and menu display."""
+    await update.message.reply_text("👋 Welcome! Choose an action below:", reply_markup=driver_menu)
+
 # 📌 **Prompt for Truck Number on First Message**
 async def new_message(update: Update, context):
     """Prompt users to enter their truck number when they first send a message."""
@@ -73,7 +77,7 @@ async def register_truck(update: Update, context):
     await show_main_menu(update, context)
 
 async def show_main_menu(update: Update, context):
-    """Show the persistent menu for all users."""
+    """Show the menu to drivers and admins."""
     user_id = update.message.from_user.id
 
     if user_id in ADMIN_IDS:
@@ -116,7 +120,7 @@ async def show_main_menu(update: Update, context):
         reply_markup = InlineKeyboardMarkup(keyboard)
         await update.message.reply_text("🔧 *Admin Panel:*", reply_markup=reply_markup)
     else:
-        await update.message.reply_text("Sandbot 2 here to help! Type [/help] for commands!")
+        await update.message.reply_text("Sandbot 2 Staging system!")
         keyboard = [
             [InlineKeyboardButton("🚛 Stage My Truck", callback_data="stage")],
             [InlineKeyboardButton("📍 Check My Status", callback_data="status")],
@@ -254,7 +258,28 @@ async def view_staged(update: Update, context):
     await query.answer("✅ Viewing staged trucks...")
     await query.edit_message_text("📋 Staged truck list goes here.")
 
+from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove
+
+# Persistent menu keyboard
+menu_keyboard = [
+    ["🚛 Stage My Truck", "📍 Check My Status"],
+    ["🏁 Leave the Well", "🔄 Change Truck Number"],
+]
+
+# Admin panel option (Admins will see this added button)
+admin_menu_keyboard = [
+    ["🚛 Stage My Truck", "📍 Check My Status"],
+    ["🏁 Leave the Well", "🔄 Change Truck Number"],
+    ["🔧 Admin Panel"]  # Only available for admins
+]
+
+# Convert menu into ReplyKeyboardMarkup (always visible)
+driver_menu = ReplyKeyboardMarkup(menu_keyboard, resize_keyboard=True, one_time_keyboard=False)
+admin_menu = ReplyKeyboardMarkup(admin_menu_keyboard, resize_keyboard=True, one_time_keyboard=False)
+
 # 📌 **Handlers**
+
+bot_app.add_handler(CommandHandler("start", start))
 bot_app.add_handler(MessageHandler(filters.TEXT & filters.Regex(r'^\d+$'), register_truck))
 bot_app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, new_message))
 bot_app.add_handler(CallbackQueryHandler(view_staged, pattern="view_staged"))
@@ -267,6 +292,7 @@ bot_app.add_handler(CallbackQueryHandler(set_well_capacity, pattern="set_well_ca
 bot_app.add_handler(CallbackQueryHandler(update_well_limit, pattern="set_limit_.*"))
 bot_app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, ai_assistant))
 bot_app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_menu_buttons))
+bot_app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, show_main_menu))
 
 if __name__ == "__main__":
     bot_app.run_polling()
