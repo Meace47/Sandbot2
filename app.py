@@ -42,7 +42,7 @@ async def start(update: Update, context):
     await update.message.reply_text("👋 Welcome! Choose an action below:", reply_markup=driver_menu)
 
 # 📌 **Prompt for Truck Number on First Message**
-async def new_message(update: Update, context)
+async def new_message(update: Update, context):
      """Prompt new users to press 'Start' before continuing."""
     user_id = update.message.from_user.id
 
