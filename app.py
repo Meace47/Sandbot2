@@ -75,9 +75,10 @@ async def register_truck(update: Update, context):
 
 # 📌 **Show Main Menu**
 async def show_main_menu(update: Update, context):
-    """Show the main menu options for drivers and admins."""
     user_id = update.message.from_user.id
     is_admin = user_id in ADMIN_IDS
+
+    print(f"User {user_id} is admin: {is_admin}") # Debugging line
 
     if is_admin:
         keyboard = [
@@ -88,6 +89,8 @@ async def show_main_menu(update: Update, context):
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
         await update.message.reply_text("🔧 *Admin Panel:*", reply_markup=reply_markup)
+    else:
+        await update.message.reply_text("❌ You are not an admin!")
     else:
         keyboard = [
             [InlineKeyboardButton("🚛 Stage My Truck", callback_data="stage")],
