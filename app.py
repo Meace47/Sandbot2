@@ -294,12 +294,90 @@ admin_menu_keyboard = [
 driver_menu = ReplyKeyboardMarkup(menu_keyboard, resize_keyboard=True, one_time_keyboard=False)
 admin_menu = ReplyKeyboardMarkup(admin_menu_keyboard, resize_keyboard=True, one_time_keyboard=False)
 
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.ext import Application, CommandHandler, CallbackContext, CallbackQueryHandler
+
+# Dictionary to store pinned message IDs per chat
+pinned_messages = {}
+
+# Sample staging and well data (Replace this with your actual tracking logic)
+staging_list = ["Truck 4070", "Truck 100", "Truck 3052"]
+well_list = ["Truck 502", "Truck 223"]
+
+async def update_pinned_message(context: CallbackContext):
+    """Updates the pinned staging & well list message"""
+    chat_id = context.job.chat_id
+    staging_list_text = get_staging_list() # Get updated staging and well list
+
+    if chat_id in pinned_messages:
+        message_id = pinned_messages[chat_id]
+        try:
+            await context.bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=staging_list_text)
+            return
+        except:
+            pass # If message can't be edited, send a new one
+
+    # If no valid pinned message exists, send a new one and pin it
+    message = await context.bot.send_message(chat_id=chat_id, text=staging_list_text)
+    await context.bot.pin_chat_message(chat_id=chat_id, message_id=message.message_id)
+    
+    # Store the new pinned message ID
+    pinned_messages[chat_id] = message.message_id
+
+async def start_pinned_updates(update: Update, context: CallbackContext):
+    """Starts automatic updates and sends Admin Menu"""
+    chat_id = update.message.chat_id
+    context.job_queue.run_repeating(update_pinned_message, interval=300, first=5, chat_id=chat_id) # Auto-update every 5 min
+    
+    # Send the admin menu with the "Update Staging" button
+    await update.message.reply_text("Pinned staging & well list will now stay updated.", reply_markup=admin_menu())
+
+def admin_menu():
+    """Creates an admin menu with a button to update staging"""
+    keyboard = [[InlineKeyboardButton("🔄 Update Staging", callback_data="update_staging")]]
+    return InlineKeyboardMarkup(keyboard)
+
+async def admin_panel(update: Update, context: CallbackContext):
+    """Sends the admin menu"""
+    query = update.callback_query
+    await query.answer()
+    await query.message.edit_text("Admin Panel:", reply_markup=admin_menu())
+
+async def manual_update_staging(update: Update, context: CallbackContext):
+    """Manually updates the pinned staging list when admin presses the button"""
+    query = update.callback_query
+    await query.answer("Updating Staging List...") # Notify admin
+    chat_id = query.message.chat_id
+    await update_pinned_message(context) # Call the update function
+    await query.message.reply_text("✅ Staging list updated.")
+
+def get_staging_list():
+    """Formats the staging and well list for the pinned message"""
+    staging_text = "\n".join([f"🚛 {truck}" for truck in staging_list]) or "No trucks in staging."
+    well_text = "\n".join([f"🛢️ {truck}" for truck in well_list]) or "No trucks at the well."
+
+    return f"""🚦 **Current Staging & Well Status** 🚦
+
+📍 **Staging List:**  
+{staging_text}
+
+💧 **Trucks at the Well:**  
+{well_text}
+
+🔄 Updated automatically every 5 minutes.
+"""
+
+# Telegram bot setup
+app = Application.builder().token("8029048707:AAFZlO5TRy4tyad28jqucBegPHEjknKFNrc").build()
+
 # 📌 **Handlers**
 
 bot_app.add_handler(CommandHandler("start", start))
+app.add_handler(CommandHandler("start_staging_updates", start_pinned_updates))
 bot_app.add_handler(MessageHandler(filters.TEXT & filters.Regex(r'▶️ Start'), handle_start_button))
 bot_app.add_handler(MessageHandler(filters.TEXT & filters.Regex(r'^\d+$'), register_truck))
 bot_app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, new_message))
+app.add_handler(CallbackQueryHandler(manual_update_staging, pattern="update_staging"))
 bot_app.add_handler(CallbackQueryHandler(view_staged, pattern="view_staged"))
 bot_app.add_handler(CallbackQueryHandler(move_to_well, pattern="move_to_well"))
 bot_app.add_handler(CallbackQueryHandler(remove_truck, pattern="remove_truck"))
